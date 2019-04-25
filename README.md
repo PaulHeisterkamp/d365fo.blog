@@ -1,5 +1,5 @@
 # d365fo.blog
-This is an overview of all my blog posts in the context of Dynamics 365 Finance and Operations (currently on LinkedIn Pulse)
+This is an overview of all my blog posts in the context of Microsoft Dynamics 365 Finance and Operations (currently on LinkedIn Pulse)
 
 [Adding Dyn365FO ISV license file(s) to generated package during Azure DevOps build (25. Apr. 2019)](https://www.linkedin.com/post/edit/adding-dyn365fo-isv-license-files-generated-package-paul-heisterkamp)
 
