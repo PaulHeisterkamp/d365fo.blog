@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>DfbAtlWHS1TestCase</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class DfbAtlWHS1TestCase extends DfbAtlTestCase
+{
+    AtlDataInvent            invent;
+    AtlDataInventOnHand      onHand;
+
+    InventLocation           warehouse;
+    InventTable              item;
+
+    InventQty                salesLineQty = 10;
+    
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>setUpTestCase</Name>
+				<Source><![CDATA[
+    public void setUpTestCase()
+    {
+        super();
+
+        data = AtlDataRootNode::construct();
+        data.sales().salesOrders().ensureCanCreate();
+        data.sales().salesOrders().ensureCanPostInvoice();
+
+        invent = data.invent();
+        onHand = data.invent().onHand();
+        items = data.invent().items();
+
+        // Get a reference to a well-known warehouse
+        warehouse = invent.warehouses().default();
+        
+        // Create a new item with the "default" setup using the item creator class. Adjust the default warehouse before saving the item.
+        item = this.getItem(warehouse);
+        
+        // Add on-hand (information about availability of the item in the warehouse) by using the on-hand adjustment command.
+        onHand.adjust().forItem(item).forInventDims([warehouse]).setQty(100).execute();
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

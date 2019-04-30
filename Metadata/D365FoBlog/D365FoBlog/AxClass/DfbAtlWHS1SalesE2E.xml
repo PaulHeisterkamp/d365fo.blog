@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>DfbAtlWHS1SalesE2E</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+[SysTestCasePartitionDependencyAttribute('initial', 'USMF'),
+    SysTestCaseDataDependencyAttribute('USMF'),
+    // only for testing purpose including committing the data
+    SysTestTransaction(TestTransactionMode::None),
+    SysTestCaseAutomaticNumberSequencesAttribute,
+    SysTestCaseUseSingleInstanceAttribute]
+class DfbAtlWHS1SalesE2E extends DfbAtlWHS1TestCase
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>testSalesOrderWithOneLineE2E</Name>
+				<Source><![CDATA[
+    [SysTestMethodAttribute]
+    public void testSalesOrderWithOneLineE2E()
+    {
+        // Create a sales order with one line using the sales order entity
+        var salesOrder = data.sales().salesOrders().createDefault();
+        var salesLine = salesOrder.addLine()
+            .setItem(item)
+            .setQuantity(salesLineQty)
+            .setPrice(100)
+            .setInventDims([warehouse])
+            .save();
+
+        // Reserve 3 units of the item using the reserve() command that is exposed directly on the sales line entity
+        salesLine.reserve().setQty(3).execute();
+        salesLine.setDeliverNow(3);
+        salesLine.save();
+
+        // Verify inventory transactions that are associated with the sales line using the inventoryTransactions query and specifications
+        salesLine.inventoryTransactions().assertExpectedLines(
+            invent.trans().spec().withStatusIssue(StatusIssue::OnOrder).withInventDims([warehouse]).withQty(-7),
+            invent.trans().spec().withStatusIssue(StatusIssue::ReservPhysical).withInventDims([warehouse]).withQty(-3));
+
+        // post packing slip to post invoice later on based on this packing slip
+        salesOrder.postPackingSlip(SalesUpdate::DeliverNow);
+
+        // just for debugging purposes to check the "real" qtys after packing slip posting
+        var onOrder = salesLine.inventoryTransactions().onOrder().totalQty();
+        var reservedPhysical = salesLine.inventoryTransactions().reservedPhysical().totalQty();
+        var deducted = salesLine.inventoryTransactions().deducted().totalQty();
+        var sold = salesLine.inventoryTransactions().sold().totalQty();
+
+        // Verify inventory transactions that are associated with the sales line using the inventoryTransactions query and specifications
+        salesLine.inventoryTransactions().assertExpectedLines(
+            invent.trans().spec().withStatusIssue(StatusIssue::OnOrder).withInventDims([warehouse]).withQty(-7),
+            invent.trans().spec().withStatusIssue(StatusIssue::Deducted).withInventDims([warehouse]).withQty(-3));
+
+        // Post invoice and verify qty afterwards
+        salesOrder.postInvoice(SalesUpdate::PackingSlip);
+
+        // just for debugging purposes to check the "real" qtys after invoice posting
+        onOrder = salesLine.inventoryTransactions().onOrder().totalQty();
+        reservedPhysical = salesLine.inventoryTransactions().reservedPhysical().totalQty();
+        deducted = salesLine.inventoryTransactions().deducted().totalQty();
+        sold = salesLine.inventoryTransactions().sold().totalQty();
+
+        // Verify inventory transactions that are associated with the sales line using the inventoryTransactions query and specifications
+        salesLine.inventoryTransactions().assertExpectedLines(
+            invent.trans().spec().withStatusIssue(StatusIssue::OnOrder).withInventDims([warehouse]).withQty(-7),
+            invent.trans().spec().withStatusIssue(StatusIssue::Sold).withInventDims([warehouse]).withQty(-3));
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

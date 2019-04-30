@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>DfbAtlWHS3SalesE2E</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+[SysTestCasePartitionDependencyAttribute('initial', 'USMF'),
+    SysTestCaseDataDependencyAttribute('USMF'),
+    // only for testing purpose including committing the data
+    SysTestTransaction(TestTransactionMode::None),
+    SysTestCaseUseSingleInstanceAttribute(true)]
+class DfbAtlWHS3SalesE2E extends DfbAtlWHS3TestCase
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>testSalesOrderWithOneLineE2E</Name>
+				<Source><![CDATA[
+    [SysTestMethodAttribute]
+    public void testSalesOrderWithOneLineE2E()
+    {
+        // Create a sales order with one line using the sales order entity
+        var salesOrder = data.sales().salesOrders().createDefault();
+        var salesLine = salesOrder.addLine()
+            .setItem(item)
+            .setQuantity(salesLineQty)
+            .setPrice(100)
+            .setInventDims([warehouse])            
+            .save();
+
+        // Reserve all 10 of the item using the reserve() command that is exposed directly on the sales line entity
+        salesLine.reserve().execute();
+
+        // Verify inventory transactions that are associated with the sales line using the inventoryTransactions query and specifications
+        salesLine.inventoryTransactions().assertExpectedLines(
+            invent.trans().spec().withStatusIssue(StatusIssue::ReservPhysical).withInventDims([warehouse]).withQty(-10));
+
+        // Release sales order to warehouse
+        salesOrder.releaseToWarehouse();
+
+        // Validate that we have one load for sales order
+        salesOrder.loads().assertSingle('Sales order should be on a load.');
+        var load = salesOrder.loads().firstEntity();
+        load.lines().assertContainsLines(whs.loadLines().spec()
+            .withOrderNumber(salesOrder.parmSalesId())              // Load line should have same sales order
+            .withItem(item)                                         // Load line should have same product
+            .withQty(salesLineQty));                                // Load line have same quantity
+
+        // Validate that we have one work for sales order
+        salesOrder.work().assertSingle('Sales order should have one work');
+        var work = salesOrder.work().singleEntity();
+        salesOrder.work().firstEntity().lines().assertExpectedLines(
+            whs.workLines().spec()
+                .withTypePick()                                     // Work type should be pick
+                .withLocation(location)                             // location should be match with inventory dimension of product
+                .withQuantity(salesLineQty)                         // Quantity should be sales line quantity
+                .withStatusOpen(),                                  // Work line status should be open
+            whs.workLines().spec()
+                .withTypePut()                                      // Work type should be pick
+                .withLocation(whs.locations().stage())              // location should be match with inventory dimension of product
+                .withQuantity(salesLineQty)                         // Quantity should be sales line quantity
+                .withStatusOpen(),                                  // Work line status should be open
+            whs.workLines().spec()
+                .withTypePick()                                     // Work type should be pick
+                .withLocation(whs.locations().stage())              // location should be match with inventory dimension of product
+                .withQuantity(salesLineQty)                         // Quantity should be sales line quantity
+                .withStatusOpen(),                                  // Work line status should be open
+            whs.workLines().spec()
+                .withTypePut()                                      // Work type should be put
+                .withLocation(whs.locations(warehouse).baydoor())   // Final put location should be bay door
+                .withStatusOpen());                                 // Work line status should be open
+        
+        var salesPicking = rf.login().salesOrderPicking();          // Login to mobile device using default user
+        salesPicking.setWork(work) ;                                // Set the work for
+        //salesPicking.setTargetLicensePlate(licensePlate);           // Set target license plate
+        salesPicking.submit();                                      // Complete the work
+        
+        // Validate work should be completed
+        salesPicking.assertWorkCompleted();
+
+        // Post packing slip to post invoice later on based on this packing slip
+        salesOrder.postPackingSlip(SalesUpdate::DeliverNow);
+
+        // Just for debugging purposes to check the "real" qtys after packing slip posting
+        var onOrder = salesLine.inventoryTransactions().onOrder().totalQty();
+        var reservedPhysical = salesLine.inventoryTransactions().reservedPhysical().totalQty();
+        var deducted = salesLine.inventoryTransactions().deducted().totalQty();
+        var sold = salesLine.inventoryTransactions().sold().totalQty();
+
+        // Verify inventory transactions that are associated with the sales line using the inventoryTransactions query and specifications
+        salesLine.inventoryTransactions().assertExpectedLines(
+            invent.trans().spec().withStatusIssue(StatusIssue::OnOrder).withInventDims([warehouse]).withQty(-7),
+            invent.trans().spec().withStatusIssue(StatusIssue::Deducted).withInventDims([warehouse]).withQty(-3));
+
+        // Post invoice and verify qty afterwards
+        salesOrder.postInvoice(SalesUpdate::PackingSlip);
+
+        // Just for debugging purposes to check the "real" qtys after invoice posting
+        onOrder = salesLine.inventoryTransactions().onOrder().totalQty();
+        reservedPhysical = salesLine.inventoryTransactions().reservedPhysical().totalQty();
+        deducted = salesLine.inventoryTransactions().deducted().totalQty();
+        sold = salesLine.inventoryTransactions().sold().totalQty();
+
+        // Verify inventory transactions that are associated with the sales line using the inventoryTransactions query and specifications
+        salesLine.inventoryTransactions().assertExpectedLines(
+            invent.trans().spec().withStatusIssue(StatusIssue::OnOrder).withInventDims([warehouse]).withQty(-7),
+            invent.trans().spec().withStatusIssue(StatusIssue::Sold).withInventDims([warehouse]).withQty(-3));
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>DfbAtlWHS3TestCase</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class DfbAtlWHS3TestCase extends DfbAtlTestCase
+{
+    AtlDataInvent            invent;
+    AtlDataWHS               whs;
+    AtlDataInventOnHand      onHand;
+    AtlDataSales             sales;
+    AtlDataWHSMobilePortal   rf;
+
+    InventLocation           warehouse;
+    InventTable              item;
+    WMSLocation              location;
+    WHSWaveTemplateTable     waveTemplate;
+
+    InventQty                salesLineQty = 10;
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>initDataSetupReferences</Name>
+				<Source><![CDATA[
+    private void initDataSetupReferences()
+    {
+        // Create data navigation variables
+        data        = AtlDataRootNode::construct();
+        invent      = data.invent();
+        whs         = data.whs();
+        items       = data.invent().items();
+        onHand      = data.invent().onHand();
+        sales       = data.sales();
+        rf          = whs.rf();
+        warehouse   = whs.warehouses().whs();
+        location    = whs.locations(warehouse).bulk();
+        item        = items.whs();
+        
+        WHSRFMenuItemTable menuItemSOPick = whs.rf().menuItems().salesOrderPicking();
+        whs.rf().menus().default().addMenuItem(menuItemSOPick);
+
+        data.sales().salesOrders().ensureCanCreate();
+        data.sales().salesOrders().ensureCanReleaseToWarehouse(warehouse);
+        data.sales().salesOrders().ensureCanPostInvoice();
+
+        // we have to ensure that this work template is on top of all other templates
+        whs.workTemplates().salesIssue().makeTopPriority();
+        
+        // Add on-hand (information about availability of the item in the warehouse) by using the on-hand adjustment command.
+        onHand.adjust().forItem(item).forInventDims([warehouse, location]).addOnHandQty(100);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>setUpTestCase</Name>
+				<Source><![CDATA[
+    public void setUpTestCase()
+    {
+        super();
+
+        ttsbegin;
+        this.initDataSetupReferences();
+        whs.helpers().setupBasicPrerequisites();
+        AtlWHSWorkUserContext::currentWorkUser(whs.workUsers().default());
+        ttscommit;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

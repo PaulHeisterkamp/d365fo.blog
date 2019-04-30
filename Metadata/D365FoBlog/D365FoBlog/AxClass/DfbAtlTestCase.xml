@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>DfbAtlTestCase</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class DfbAtlTestCase extends SysTestCase
+{
+    AtlDataRootNode          data;
+    AtlDataProductItems      items;
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>getItem</Name>
+				<Source><![CDATA[
+    public InventTable getItem(InventLocation _warehouse)
+    {
+        // Create a new item with the "default" setup using the item creator class. Adjust the default warehouse before saving the item.
+        var itemDefaultBuilder = items.defaultBuilder();
+        InventTable inventTable = InventTable::find(itemDefaultBuilder.ItemId);
+        if (inventTable.RecId)
+        {
+            InventItemSetupSupplyType inventItemSetupSupplyType;
+            delete_from inventItemSetupSupplyType
+                where inventItemSetupSupplyType.ItemId == inventTable.ItemId;
+
+            InventModelGroupItem inventModelGroupItem;
+            delete_from inventModelGroupItem
+                where inventModelGroupItem.ItemId == inventTable.ItemId;
+
+            InventItemGroupItem inventItemGroupItem;
+            delete_from inventItemGroupItem
+                where inventItemGroupItem.ItemId == inventTable.ItemId;
+
+            EcoResStorageDimensionGroupItem ecoResStorageDimensionGroupItem;
+            delete_from ecoResStorageDimensionGroupItem
+                where ecoResStorageDimensionGroupItem.ItemId == inventTable.ItemId;
+
+            EcoResTrackingDimensionGroupItem ecoResTrackingDimensionGroupItem;
+            delete_from ecoResTrackingDimensionGroupItem
+                where ecoResTrackingDimensionGroupItem.ItemId == inventTable.ItemId;
+
+            InventTableModule inventTableModule;
+            delete_from inventTableModule
+                where inventTableModule.ItemId == inventTable.ItemId;
+
+            InventItemLocation inventItemLocation;
+            delete_from inventItemLocation
+                where inventItemLocation.ItemId == inventTable.ItemId;
+        }
+        
+        return itemDefaultBuilder.setDefaultWarehouse(_warehouse).create();
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>
