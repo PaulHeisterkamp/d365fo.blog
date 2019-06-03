@@ -1,6 +1,8 @@
 # d365fo.blog
 This is an overview of all my blog posts in the context of Microsoft Dynamics 365 Finance and Operations (currently on LinkedIn Pulse)
 
+[How to update to the latest and greatest version of Dyn365FO with more than two months (10 - 11 weeks) available for testing (3. June 2019)](https://www.linkedin.com/pulse/how-update-latest-greatest-version-dyn365fo-more-than-heisterkamp/)
+
 [Success story: Updating Dyn365FO from 8.1.2 PU22 to 10.0.1 PU25 (29. May 2019)](https://www.linkedin.com/pulse/success-story-updating-dyn365fo-from-812-pu22-1001-pu25-heisterkamp/)
 
 [Overview of Feature-Flights in Dyn365FO Version 10.0.2 PU26 (21. May 2019)](https://www.linkedin.com/pulse/overview-feature-flights-dyn365fo-version-1002-pu26-paul-heisterkamp/)
