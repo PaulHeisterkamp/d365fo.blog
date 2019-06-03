@@ -1,6 +1,10 @@
 # d365fo.blog
 This is an overview of all my blog posts in the context of Microsoft Dynamics 365 Finance and Operations (currently on LinkedIn Pulse)
 
+[Success story: Updating Dyn365FO from 8.1.2 PU22 to 10.0.1 PU25 (29. May 2019)](https://www.linkedin.com/pulse/success-story-updating-dyn365fo-from-812-pu22-1001-pu25-heisterkamp/)
+
+[Overview of Feature-Flights in Dyn365FO Version 10.0.2 PU26 (21. May 2019)](https://www.linkedin.com/pulse/overview-feature-flights-dyn365fo-version-1002-pu26-paul-heisterkamp/)
+
 [First impressions of Dyn365FO application test library (ATL) (13. May 2019)](https://www.linkedin.com/pulse/first-impressions-dyn365fo-application-test-library-atl-heisterkamp/)
 
 [Adding Dyn365FO ISV license file(s) to generated package during Azure DevOps build (25. Apr. 2019)](https://www.linkedin.com/pulse/adding-dyn365fo-isv-license-files-generated-package-paul-heisterkamp)
