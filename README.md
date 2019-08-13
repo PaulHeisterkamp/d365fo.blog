@@ -1,6 +1,14 @@
 # d365fo.blog
 This is an overview of all my blog posts in the context of Microsoft Dynamics 365 Finance and Operations (currently on LinkedIn Pulse)
 
+[Using ER (Electronic Reporting) for ESR credit transfer (Switzerland) in Dyn365FO (12. July 2019)](https://www.linkedin.com/pulse/using-er-electronic-reporting-esr-credit-transfer-paul-heisterkamp/)
+
+[Do you kown delivery plans on Azure DevOps? (4. July 2019)](https://www.linkedin.com/pulse/do-you-kown-delivery-plans-azure-devops-paul-heisterkamp/)
+
+[My first experiences with CDE for Dyn365FO (25. June 2019)](https://www.linkedin.com/pulse/my-first-experiences-cde-dyn365fo-paul-heisterkamp/)
+
+[Streamlining print to local printer without DRA (document routing agent) in Dyn365FO (13. June 2019)](https://www.linkedin.com/pulse/streamlining-print-local-printer-without-dra-document-heisterkamp/)
+
 [How to update to the latest and greatest version of Dyn365FO with more than two months (10 - 11 weeks) available for testing (3. June 2019)](https://www.linkedin.com/pulse/how-update-latest-greatest-version-dyn365fo-more-than-heisterkamp/)
 
 [Success story: Updating Dyn365FO from 8.1.2 PU22 to 10.0.1 PU25 (29. May 2019)](https://www.linkedin.com/pulse/success-story-updating-dyn365fo-from-812-pu22-1001-pu25-heisterkamp/)
