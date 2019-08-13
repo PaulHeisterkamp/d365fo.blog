@@ -1,1 +1,2 @@
-The folder SQL does include some sql scripts.
+# SQL
+This folder contains some sql scripts.
