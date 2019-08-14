@@ -1,6 +1,8 @@
 # d365fo.blog
 This is an overview of all my blog posts in the context of Microsoft Dynamics 365 Finance and Operations (currently on LinkedIn Pulse)
 
+[Analyzing the first results of Application Checker for MsDyn365FO (14. August 2019)](https://www.linkedin.com/pulse/analyzing-first-results-application-checker-paul-heisterkamp/)
+
 [Using ER (Electronic Reporting) for ESR credit transfer (Switzerland) in Dyn365FO (12. July 2019)](https://www.linkedin.com/pulse/using-er-electronic-reporting-esr-credit-transfer-paul-heisterkamp/)
 
 [Do you kown delivery plans on Azure DevOps? (4. July 2019)](https://www.linkedin.com/pulse/do-you-kown-delivery-plans-azure-devops-paul-heisterkamp/)
