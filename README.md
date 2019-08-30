@@ -1,6 +1,10 @@
 # d365fo.blog
 This is an overview of all my blog posts in the context of Microsoft Dynamics 365 Finance and Operations (currently on LinkedIn Pulse)
 
+[This is how we do load test analysis for MsDyn365FO on SQL level (29. August 2019)](https://www.linkedin.com/pulse/how-we-do-load-test-analysis-msdyn365fo-sql-level-paul-heisterkamp/)
+
+[How to change colors per instance for MsDyn365FO (23. August 2019)](https://www.linkedin.com/pulse/how-change-colors-per-instance-msdyn365fo-paul-heisterkamp/)
+
 [Analyzing the first results of Application Checker for MsDyn365FO (14. August 2019)](https://www.linkedin.com/pulse/analyzing-first-results-application-checker-paul-heisterkamp/)
 
 [Using ER (Electronic Reporting) for ESR credit transfer (Switzerland) in Dyn365FO (12. July 2019)](https://www.linkedin.com/pulse/using-er-electronic-reporting-esr-credit-transfer-paul-heisterkamp/)
