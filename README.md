@@ -1,6 +1,12 @@
 # d365fo.blog
 This is an overview of all my blog posts in the context of Microsoft Dynamics 365 Finance and Operations (currently on LinkedIn Pulse)
 
+[Creating an ODataClient for MsDyn365FO (24. September 2019)](https://www.linkedin.com/pulse/creating-odataclient-msdyn365fo-paul-heisterkamp/)
+
+[Include your MSDyn365FO WHS mobile app processes in regression test automation (11. September 2019)](https://www.linkedin.com/pulse/include-your-msdyn365fo-whs-mobile-app-processes-test-heisterkamp/)
+
+[Speed up the support process for MSDyn365FO by using ATL to provide the repro (5. September 2019)](https://www.linkedin.com/pulse/speed-up-support-process-msdyn365fo-using-atl-provide-heisterkamp/)
+
 [This is how we do load test analysis for MsDyn365FO on SQL level (29. August 2019)](https://www.linkedin.com/pulse/how-we-do-load-test-analysis-msdyn365fo-sql-level-paul-heisterkamp/)
 
 [How to change colors per instance for MsDyn365FO (23. August 2019)](https://www.linkedin.com/pulse/how-change-colors-per-instance-msdyn365fo-paul-heisterkamp/)
