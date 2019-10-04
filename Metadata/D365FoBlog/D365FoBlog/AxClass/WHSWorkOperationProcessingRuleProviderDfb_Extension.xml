@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>WHSWorkOperationProcessingRuleProviderDfb_Extension</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+/// <summary>
+/// Code extension class for class WHSWorkOperationProcessingRuleProvider.
+/// </summary>
+[ExtensionOf(classStr(WHSWorkOperationProcessingRuleProvider))]
+public final class WHSWorkOperationProcessingRuleProviderDfb_Extension
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>workOperationProcessingRule</Name>
+				<Source><![CDATA[
+    public WHSWorkOperationProcessingRule workOperationProcessingRule(
+        WHSWorkTable _workTable,
+        WHSWorkType  _workType)
+    {
+        WHSWorkOperationProcessingRule ret = next workOperationProcessingRule(_workTable, _workType);
+
+        // if we do not find WorkProcessingPolicy on InventLocation and WHSParameters, we search for policy on 
+        if (!ret.RecId)
+        {
+            // analyze profile of the first put line
+            WHSWorkLine workLine;
+            WMSLocation location;
+            WHSLocationProfile locationProfile;
+            select firstonly WorkId, WorkType from workLine
+                where workLine.WorkId == _workTable.WorkId
+                    && workLine.WorkType == WHSWorkType::Put
+                join wMSLocationId from location
+                    where location.wMSLocationId == workLine.WMSLocationId
+                        && location.inventLocationId == _workTable.InventLocationId
+                join LocProfileId, DfbWorkProcessingPolicyName from locationProfile
+                    where locationProfile.LocProfileId == location.LocProfileId;
+            if (locationProfile.RecId && locationProfile.DfbWorkProcessingPolicyName)
+            {
+                ret = WHSWorkOperationProcessingRule::find(locationProfile.DfbWorkProcessingPolicyName, _workTable.WorkTransType, _workType);
+            }                    
+        }
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>
