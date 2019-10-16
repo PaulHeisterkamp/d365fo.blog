@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>DfbActivateDatabaseLog</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+/// <summary>
+/// Runnable class to activate database log.
+/// </summary>
+public class DfbActivateDatabaseLog
+{
+    private static RecordInsertList toInsert;
+    private static Set reconfigureSqlLogging;
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>main</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Inserts databaslog records.
+    /// </summary>
+    /// <param name = "_args">Args.</param>
+    public static void main(Args _args)
+    {
+        ttsbegin;
+    
+        toInsert = new RecordInsertList(tableNum(DatabaseLog));
+        reconfigureSqlLogging = new Set(Types::Int64);
+
+        DfbActivateDatabaseLog::createInsertUpdateAndDeleteDatabasLogEntriesForTables();
+        DfbActivateDatabaseLog::createUpdateDatabaseLogEntriesForFields();
+
+        toInsert.insertDatabase();
+        
+        // Activate database log
+        DfbActivateDatabaseLog::reconfigureSqlDatabasLogging();
+
+        ttscommit;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>createInsertUpdateAndDeleteDatabasLogEntriesForTables</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Creates database log entries for a specified set of tables.
+    /// </summary>
+    private static void createInsertUpdateAndDeleteDatabasLogEntriesForTables()
+    {
+        List tables = DfbActivateDatabaseLog::getTableIds();
+        ListIterator li = new ListIterator(tables);
+        
+        while(li.more())
+        {
+            DfbActivateDatabaseLog::insertDatabaseLogForInsertAction(li.value());
+            DfbActivateDatabaseLog::insertDatabaseLogForUpdateAction(li.value());
+            DfbActivateDatabaseLog::insertDatabaseLogForDeleteAction(li.value());
+            li.next();
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>createUpdateDatabaseLogEntriesForFields</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Creates database log entries for a specified set of fields.
+    /// </summary>
+    private static void createUpdateDatabaseLogEntriesForFields()
+    {
+        Map fields = DfbActivateDatabaseLog::getFields();
+        MapIterator mi = new MapIterator(fields);
+      
+        while(mi.more())
+        {
+            DfbActivateDatabaseLog::insertDatabaseLogForField(mi.key(), mi.value());
+            mi.next();
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>getFields</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Returns a Map containing the TableId and the depending fieldids of the fields which schould be logged.
+    /// </summary>
+    /// <returns>Map</returns>
+    private static Map getFields()
+    {
+        Map tableFieldMap = new Map(Types::Int64, Types::Class);
+        List fields = new List(Types::Int64);
+    
+        // Create a list of fields wich schould be logged and add it to the map.
+        fields.addEnd(fieldName2Id(tableNum(CustTable), fieldStr(CustTable, CashDisc)));
+        tableFieldMap.insert(tableNum(CustTable), fields);
+
+        fields = new List(Types::Int64);
+
+        return tableFieldMap;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>getTableIds</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Gets a list of TableIds of the tables for which logging schould be enabeld.
+    /// </summary>
+    /// <returns>List</returns>
+    protected static List getTableIds()
+    {
+        List tableIds = new List(Types::Int64);
+
+        tableIds.addEnd(tableNum(DlvTerm));
+        tableIds.addEnd(tableNum(TMSDlvTerm));
+        
+        tableIds.addEnd(tableNum(DlvMode));
+        
+        tableIds.addEnd(tableNum(CustParameters));
+        tableIds.addEnd(tableNum(SalesParameters));
+        tableIds.addEnd(tableNum(WHSParameters));
+        tableIds.addEnd(tableNum(PurchParameters));
+        tableIds.addEnd(tableNum(VendParameters));
+        tableIds.addEnd(tableNum(BankParameters));
+        tableIds.addEnd(tableNum(LedgerParameters));
+        tableIds.addEnd(tableNum(TaxParameters));
+        tableIds.addEnd(tableNum(AssetParameters));
+        tableIds.addEnd(tableNum(TMSParameters));   
+        tableIds.addEnd(tableNum(InventParameters));        
+        tableIds.addEnd(tableNum(WMSParameters));
+        tableIds.addEnd(tableNum(EcoResProductParameters));
+        tableIds.addEnd(tableNum(ReqParameters));
+        tableIds.addEnd(tableNum(SystemParameters));
+
+        tableIds.addEnd(tableNum(VendGroup));
+        tableIds.addEnd(tableNum(CustGroup));
+
+        tableIds.addEnd(tableNum(EcoResProductCategory));
+        tableIds.addEnd(tableNum(EcoResCategory));
+        tableIds.addEnd(tableNum(EcoResCategoryHierarchy));
+
+        tableIds.addEnd(tableNum(BankAccountTable));
+
+        tableIds.addEnd(tableNum(WHSPackProfile));
+        tableIds.addEnd(tableNum(WHSCloseContainerProfile));
+
+        tableIds.addEnd(tableNum(PaymTerm));
+        tableIds.addEnd(tableNum(PaymDay));
+        tableIds.addEnd(tableNum(PaymDayLine));
+
+        tableIds.addEnd(tableNum(PaymSched));
+        tableIds.addEnd(tableNum(PaymSchedLine));
+
+        tableIds.addEnd(tableNum(CustPaymModeTable));
+        tableIds.addEnd(tableNum(VendPaymModeTable));
+
+        tableIds.addEnd(tableNum(MarkupAutoTable));
+        tableIds.addEnd(tableNum(MarkupAutoLine));
+        tableIds.addEnd(tableNum(MarkupTable));
+
+        tableIds.addEnd(tableNum(CashDisc));
+
+        tableIds.addEnd(tableNum(Ledger));
+        tableIds.addEnd(tableNum(MainAccount));
+        tableIds.addEnd(tableNum(LedgerJournalName));
+
+        tableIds.addEnd(tableNum(VendLedger));
+        tableIds.addEnd(tableNum(VendLedgerAccounts));
+
+        tableIds.addEnd(tableNum(CustLedger));
+        tableIds.addEnd(tableNum(CustLedgerAccounts));
+
+        tableIds.addEnd(tableNum(WHSLocationType));
+        tableIds.addEnd(tableNum(WHSLocationFormat));
+        tableIds.addEnd(tableNum(WHSLocationFormatLine));
+        tableIds.addEnd(tableNum(WHSLocationProfile));
+        tableIds.addEnd(tableNum(WHSLocDirTable));
+        tableIds.addEnd(tableNum(WHSLocDirLine));
+        tableIds.addEnd(tableNum(WHSLocDirAction));
+        tableIds.addEnd(tableNum(WHSWorkTemplateTable));
+        tableIds.addEnd(tableNum(WHSWorkClassTable));
+        tableIds.addEnd(tableNum(WHSWorkTemplateLine));
+        tableIds.addEnd(tableNum(WHSWaveTemplateTable));
+        tableIds.addEnd(tableNum(WHSDocumentRoutingLayout));
+        tableIds.addEnd(tableNum(WHSDocumentRoutingLine));
+        tableIds.addEnd(tableNum(WHSDocumentRoutingTable));
+        tableIds.addEnd(tableNum(WHSRFMenuItemLine));
+        tableIds.addEnd(tableNum(WHSRFMenuItemTable));
+        tableIds.addEnd(tableNum(WHSRFMenuLine));
+        tableIds.addEnd(tableNum(WHSRFMenuTable));
+
+        tableIds.addEnd(tableNum(InventLocation));
+        tableIds.addEnd(tableNum(InventSite));
+
+        tableIds.addEnd(tableNum(InventItemGroup));
+        tableIds.addEnd(tableNum(InventItemGroupForm));
+        tableIds.addEnd(tableNum(InventItemGroupItem));
+
+        tableIds.addEnd(tableNum(InventJournalName));
+
+        tableIds.addEnd(tableNum(InventPosting));
+        tableIds.addEnd(tableNum(InventPostingParameters));
+
+        tableIds.addEnd(tableNum(EcoResProductDimensionGroup));
+        tableIds.addEnd(tableNum(EcoResProductDimensionGroupFldSetup));
+        tableIds.addEnd(tableNum(EcoResTrackingDimensionGroup));
+        tableIds.addEnd(tableNum(EcoResTrackingDimensionGroupFldSetup));
+        tableIds.addEnd(tableNum(EcoResStorageDimensionGroup));
+        tableIds.addEnd(tableNum(EcoResStorageDimensionGroupFldSetup));
+        tableIds.addEnd(tableNum(InventModelGroup));
+
+        tableIds.addEnd(tableNum(ReqPlanSched));
+        tableIds.addEnd(tableNum(ReqPlan));
+        tableIds.addEnd(tableNum(ReqGroup));
+
+        tableIds.addEnd(tableNum(TaxLedgerAccountGroup));
+        tableIds.addEnd(tableNum(TaxExemptCodeTable));
+        tableIds.addEnd(tableNum(TaxReportCollection));
+        tableIds.addEnd(tableNum(TaxTable));
+        tableIds.addEnd(tableNum(TaxGroupHeading));
+        tableIds.addEnd(tableNum(TaxGroupData));
+        tableIds.addEnd(tableNum(TaxGroupTaxJurisdiction));
+        tableIds.addEnd(tableNum(TaxItemGroupHeading));
+        tableIds.addEnd(tableNum(TaxOnItem));
+        tableIds.addEnd(tableNum(TaxAuthorityAddress));
+        tableIds.addEnd(tableNum(TaxPeriodHead));
+        tableIds.addEnd(tableNum(TaxReportPeriod));
+
+        tableIds.addEnd(tableNum(TMSRouteGuide));
+        tableIds.addEnd(tableNum(TMSRouteConfig));
+        tableIds.addEnd(tableNum(TMSRouteSegmentConfig));
+        tableIds.addEnd(tableNum(TMSRouteSchedule));
+        tableIds.addEnd(tableNum(TMSHubMaster));
+        tableIds.addEnd(tableNum(TMSHubType));
+
+        tableIds.addEnd(tableNum(ReturnDispositionCode));
+        tableIds.addEnd(tableNum(ReturnReasonCode));
+
+        tableIds.addEnd(tableNum(ReqItemTable));
+
+        tableIds.addEnd(tableNum(CustTable));
+        tableIds.addEnd(tableNum(VendTable));
+        tableIds.addEnd(tableNum(DirPartyTable));
+
+        return tableIds;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>insertDatabaseLogForField</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Insert database log records for the given fields and table.
+    /// </summary>
+    /// <param name = "_tableId">RefTableId.</param>
+    /// <param name = "_fieldList">List of fields which schould be logged.</param>
+    private static void insertDatabaseLogForField(RefTableId _tableId, List _fieldList)
+    {
+        ListIterator li = new ListIterator(_fieldList);
+        while(li.more())
+        {
+            DfbActivateDatabaseLog::insertDatabaseLogFor(DatabaseLogType::Update, _tableId, li.value());
+            li.next();
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>insertDatabaseLogForInsertAction</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Insert a database log record for an insert on the given table.
+    /// </summary>
+    /// <param name = "_tableNum">RefTableId</param>
+    private static void insertDatabaseLogForInsertAction(RefTableId _tableNum)
+    {
+        DfbActivateDatabaseLog::insertDatabaseLogFor(DatabaseLogType::Insert, _tableNum);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>insertDatabaseLogForUpdateAction</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Insert a database log record for an update on the given table.
+    /// </summary>
+    /// <param name = "_tableNum">RefTableId</param>
+    private static void insertDatabaseLogForUpdateAction(RefTableId _tableNum)
+    {
+        DfbActivateDatabaseLog::insertDatabaseLogFor(DatabaseLogType::Update, _tableNum);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>insertDatabaseLogForDeleteAction</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Insert a databas log record for a delete on the given table.
+    /// </summary>
+    /// <param name = "_tableNum">RefTableId</param>
+    private static void insertDatabaseLogForDeleteAction(RefTableId _tableNum)
+    {
+        DfbActivateDatabaseLog::insertDatabaseLogFor(DatabaseLogType::Delete, _tableNum);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>insertDatabaseLogFor</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Insert a database log record with the given paramaters.
+    /// </summary>
+    /// <param name = "_logType">DatabaseLogType</param>
+    /// <param name = "_tableNum">RefTableId</param>
+    /// <param name = "_fieldId">RefFieldId</param>
+    private static void insertDatabaseLogFor(DatabaseLogType _logType, RefTableId _tableNum, RefFieldId _fieldId = 0)
+    {
+        DatabaseLog databaseLog;
+            
+        select firstOnly databaseLog
+            where databaseLog.logType == _logType
+            && DatabaseLog.logField == _fieldId
+            && databaseLog.logTable == _tableNum;
+
+        if (!databaseLog.RecId)
+        {
+            databaseLog.clear();
+            databaseLog.logTable = _tableNum;
+            databaseLog.logType = _logType;
+            databaseLog.logField = _fieldId;
+
+            toInsert.add(DatabaseLog);
+
+            if (!reconfigureSqlLogging.in(_tableNum))
+            {
+                reconfigureSqlLogging.add(_tableNum);
+            }
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>reconfigureSqlDatabasLogging</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Enable the sql database logging.
+    /// </summary>
+    private static void reconfigureSqlDatabasLogging()
+    {
+        SetIterator si = new SetIterator(reconfigureSqlLogging);
+        while (si.more())
+        {
+            SysDataBaseLog::ReConfigureSqlLogging(tableId2Name(si.value()));
+            si.next();
+        }
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>
