@@ -1,6 +1,12 @@
 # d365fo.blog
 This is an overview of all my blog posts in the context of Microsoft Dynamics 365 Finance and Operations (currently on LinkedIn Pulse)
 
+[How to create setup for database logging on setup-tables for MsDyn365FO (23. October 2019)](https://www.linkedin.com/pulse/how-create-setup-database-logging-setup-tables-paul-heisterkamp/)
+
+[How to activate deferred put for MsDyn365FO for specific location profiles (10. October 2019)](https://www.linkedin.com/pulse/how-activate-deferred-put-msdyn365fo-specific-paul-heisterkamp/)
+
+[SQL Resource Governor in combination with MSDyn365FO (2. October 2019)](https://www.linkedin.com/pulse/sql-resource-governor-combination-msdyn365fo-paul-heisterkamp/)
+
 [Creating an ODataClient for MsDyn365FO (24. September 2019)](https://www.linkedin.com/pulse/creating-odataclient-msdyn365fo-paul-heisterkamp/)
 
 [Include your MSDyn365FO WHS mobile app processes in regression test automation (11. September 2019)](https://www.linkedin.com/pulse/include-your-msdyn365fo-whs-mobile-app-processes-test-heisterkamp/)
