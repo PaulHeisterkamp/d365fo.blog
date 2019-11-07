@@ -1,7 +1,7 @@
-# d365fo.blog
-This is an overview of all my blog posts in the context of Microsoft Dynamics 365 Finance and Operations (currently on LinkedIn Pulse)
+# d365fo.blog / msdyn365fo.blog
+In this repository you can find content related to my blog posts in the context of Microsoft Dynamics 365 Finance and Operations on https://msdyn365fo.wordpress.com/
 
-[How to create setup for database logging on setup-tables for MsDyn365FO (23. October 2019)](https://www.linkedin.com/pulse/how-create-setup-database-logging-setup-tables-paul-heisterkamp/)
+The following section is only a To-do list for me to move over my content from LinkedIn Pulse.
 
 [How to activate deferred put for MsDyn365FO for specific location profiles (10. October 2019)](https://www.linkedin.com/pulse/how-activate-deferred-put-msdyn365fo-specific-paul-heisterkamp/)
 
