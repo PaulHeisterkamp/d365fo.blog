@@ -1,7 +1,11 @@
 # d365fo.blog / msdyn365fo.blog
 In this repository you can find content related to my blog posts in the context of Microsoft Dynamics 365 Finance and Operations on https://msdyn365fo.wordpress.com/
 
-The following section is only a To-do list for me to move over my content from LinkedIn Pulse.
+The following section is a list of post if released posts on LinkedIn Pulse, but I also moved them to https://msdyn365fo.wordpress.com/. The posts are still there for reference and tracking comments/feedback.
+
+[This is how TempDB tables implemented in MsDyn365FO (31. October 2019)](https://www.linkedin.com/pulse/how-tempdb-tables-implemented-msdyn365fo-paul-heisterkamp/)
+
+[How to create setup for database logging on setup-tables for MsDyn365FO (23. October 2019)](https://www.linkedin.com/pulse/how-create-setup-database-logging-setup-tables-paul-heisterkamp/)
 
 [How to activate deferred put for MsDyn365FO for specific location profiles (10. October 2019)](https://www.linkedin.com/pulse/how-activate-deferred-put-msdyn365fo-specific-paul-heisterkamp/)
 
