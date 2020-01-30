@@ -1,6 +1,9 @@
-﻿$PackageFolder = "D365FoBlog"
+﻿$AOSMetadataPath = "K:\AOSService\PackagesLocalDirectory"
 $RepoPath = "."
-$RepoPath = $RepoPath + "\Metadata"
-$MetadataPath = "K:\AOSService\PackagesLocalDirectory"
-$Target = "$RepoPath\$PackageFolder"
-New-Item -ItemType SymbolicLink -Path "$MetadataPath" -Name "$PackageFolder" -Value "$Target"
+$RepoMetadataPath = $RepoPath + "\Metadata"
+$RepoModelFolders = Get-ChildItem $RepoMetadataPath -Directory
+foreach ($ModelFolder in $RepoModelFolders)
+{
+	$Target = "$RepoMetadataPath\$ModelFolder"
+	New-Item -ItemType SymbolicLink -Path "$AOSMetadataPath" -Name "$ModelFolder" -Value "$Target"
+}
