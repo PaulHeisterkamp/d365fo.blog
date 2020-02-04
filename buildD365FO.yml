@@ -1,0 +1,67 @@
+name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
+
+pool:
+  name: 'D365'
+  demands: 
+  - DotNetFramework
+  - msbuild
+  - vstest
+  - DynamicsSDK
+  
+variables:  
+  DatabaseBackupToRestore: ''
+  
+steps:
+- task: PowerShell@1
+  displayName: 'Prepare for build'
+  inputs:
+    scriptName: '$(DynamicsSDK)\PrepareForBuild.ps1'
+    arguments: '-DatabaseBackupToRestore "$(DatabaseBackupToRestore)" -Verbose'
+    
+- task: XppUpdateModelVersion@0
+  displayName: 'Update Model Version'
+  inputs:
+    XppSourcePath: '$(Build.SourcesDirectory)'
+    XppDescriptorSearch: '**\Descriptor\*.xml'
+    XppLayer: '8'
+    VersionNumber: '$(Build.BuildNumber)'
+  
+- task: CopyFiles@2
+  displayName: 'Copy build project'
+  inputs:
+    SourceFolder: '$(DynamicsSDK)'
+    Contents: 'AXModulesBuild.proj'
+    TargetFolder: '$(Build.SourcesDirectory)'
+
+- task: MSBuild@1
+  displayName: 'Build the solution'
+  inputs:
+    solution: '$(Build.SourcesDirectory)/AXModulesBuild.proj'
+    msbuildVersion: 14.0
+    msbuildArchitecture: x64
+    platform: $(BuildPlatform)
+    configuration: $(BuildConfiguration)
+    msbuildArguments: '/p:OutputPath="$(Agent.BuildDirectory)\Bin" /p:LogPath="$(Agent.BuildDirectory)\Logs"'
+    clean: true
+    logProjectEvents: true
+
+- task: XppCreatePackage@0
+  displayName: 'Create Deployable Package'
+  inputs:
+    XppToolsPath: '$(ServiceDrive)\AOSService\PackagesLocalDirectory\bin'
+    XppBinariesPath: '$(Agent.BuildDirectory)\Bin'
+    DeployablePackagePath: '$(Build.ArtifactStagingDirectory)\AXDeployableRuntime_$(Build.BuildNumber).zip'
+
+- task: XppAddLicenseToPackage@0
+  displayName: 'Add Licenses to Deployable Package'
+  enabled: false
+  inputs:
+    LicenseFilePaths: '*.txt'
+    DeployablePackagePath: '$(Build.ArtifactStagingDirectory)\AXDeployableRuntime_$(Build.BuildNumber).zip'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: PackageBinaries'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)\AXDeployableRuntime_$(Build.BuildNumber).zip'
+    ArtifactName: 'PackageBinaries'
+    publishLocation: 'Container'
