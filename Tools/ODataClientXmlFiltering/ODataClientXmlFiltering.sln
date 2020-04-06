@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29519.87
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ODataClientXmlFiltering", "ODataClientXmlFiltering\ODataClientXmlFiltering.csproj", "{8286CD17-0F57-46E1-BD36-35E279B48375}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8286CD17-0F57-46E1-BD36-35E279B48375}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8286CD17-0F57-46E1-BD36-35E279B48375}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8286CD17-0F57-46E1-BD36-35E279B48375}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8286CD17-0F57-46E1-BD36-35E279B48375}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A3593BA8-DF93-4D7C-ADBF-779B7971C964}
+	EndGlobalSection
+EndGlobal
