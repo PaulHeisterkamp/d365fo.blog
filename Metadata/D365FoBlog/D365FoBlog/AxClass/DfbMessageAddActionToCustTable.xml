@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>DfbMessageAddActionToCustTable</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class DfbMessageAddActionToCustTable
+{
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>main</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Runs the class with the specified arguments.
+    /// </summary>
+    /// <param name = "_args">The specified arguments.</param>
+    public static void main(Args _args)
+    {
+        CustTable custTable = CustTable::find('US-003');
+
+        MenuItemMessageAction actionData = new MenuItemMessageAction();
+        actionData.MenuItemName(menuItemDisplayStr(CustTable));
+        actionData.TableName(tableStr(CustTable));
+        actionData.RecId(custTable.RecId);
+        str jsonData = FormJsonSerializer::serializeClass(actionData);
+
+        int64 messageId = Message::AddAction(MessageSeverity::Informational, 
+            "@SYS117450",
+            custTable.name(), MessageActionType::DisplayMenuItem, jsonData);
+
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>
