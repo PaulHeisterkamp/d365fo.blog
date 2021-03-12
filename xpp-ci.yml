@@ -16,7 +16,7 @@ pool:
   
 # Declare some shorthand for NuGet package names
 # Make editing the path for metadata and NuGet extraction folder easier
-variables:
+variables:    
   AppPackage: 'Microsoft.Dynamics.AX.Application.DevALM.BuildXpp'
   AppSuitePackage: 'Microsoft.Dynamics.AX.ApplicationSuite.DevALM.BuildXpp'
   PlatPackage: 'Microsoft.Dynamics.AX.Platform.DevALM.BuildXpp'
@@ -28,7 +28,6 @@ variables:
   BuildArtifactName: drop
   LcsServiceConnectionName: 'LCS - Connection'
   LcsEnvironmentId: ''
-  LcsProjectId: 0
 
 stages:
 - stage: D365Build
@@ -115,7 +114,7 @@ stages:
     buildArtifactName: $(BuildArtifactName)
     lcsServiceConnectionName: $(LcsServiceConnectionName)
     lcsEnvironmentId: $(LcsEnvironmentId)
-    lcsProjectId: $(LcsProjectId)
+    lcsProjectId: 0
     lcsPackages:
       - name: AXDeployableRuntime
         artifactAssetPath: 'AXDeployableRuntime_$(Build.BuildNumber).zip'
