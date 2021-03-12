@@ -35,7 +35,7 @@ parameters:
 - name: LcsEnvironmentId
   displayName: LCS environment id to deploy build result 
   type: string
-  default: ''
+  default: '00000000-0000-0000-0000-000000000000'
 
 # Declare some shorthand for NuGet package names
 # Make editing the path for metadata and NuGet extraction folder easier
