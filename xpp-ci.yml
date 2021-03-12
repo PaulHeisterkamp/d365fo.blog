@@ -24,6 +24,11 @@ variables:
   MetadataPath: '$(Build.SourcesDirectory)\Metadata'
   NugetConfigsPath: '$(Build.SourcesDirectory)\Metadata'
   NugetsPath: '$(Pipeline.Workspace)\NuGets'
+  # Variables needed for upload to LCS and deploy via LCS
+  BuildArtifactName: drop
+  LcsServiceConnectionName: 'LCS - Connection'
+  LcsEnvironmentId: ''
+  LcsProjectId: 0
 
 steps:
 # Install NuGet and use -ExcludeVersion option to avoid paths containing version numbers
@@ -98,3 +103,14 @@ steps:
     PathtoPublish: '$(build.artifactstagingdirectory)'
   condition: succeededOrFailed()
 
+# Upload to LCS and deploy via LCS
+- template: xpp-ci-LCS-deployment.yml
+  parameters:
+    buildArtifactName: $(BuildArtifactName)
+    lcsServiceConnectionName: $(LcsServiceConnectionName)
+    lcsEnvironmentId: $(LcsEnvironmentId)
+    lcsProjectId: $(LcsProjectId)
+    lcsPackages:
+      - name: AXDeployableRuntime
+        artifactAssetPath: 'AXDeployableRuntime_$(Build.BuildNumber).zip'
+        deployPackage: true
