@@ -14,9 +14,32 @@ pool:
     - msbuild
     - visualstudio
   
+# Variables/parameters needed for upload to LCS and deploy via LCS
+parameters:
+- name: DeployToLCS
+  displayName: Do you want to deploy the build result to LCS?
+  type: boolean
+  default: true
+- name: BuildArtifactName
+  displayName: Build artifact name to use for LCS deployment.
+  type: string
+  default: 'drop'
+- name: LcsServiceConnectionName
+  displayName: Service conncetion name to use for LCS deployment
+  type: string
+  default: 'LCS - Connection'
+- name: LcsProjectId
+  displayName: LCS project id to deploy build result 
+  type: number
+  default: 0 
+- name: LcsEnvironmentId
+  displayName: LCS environment id to deploy build result 
+  type: string
+  default: ''
+
 # Declare some shorthand for NuGet package names
 # Make editing the path for metadata and NuGet extraction folder easier
-variables:    
+variables:
   AppPackage: 'Microsoft.Dynamics.AX.Application.DevALM.BuildXpp'
   AppSuitePackage: 'Microsoft.Dynamics.AX.ApplicationSuite.DevALM.BuildXpp'
   PlatPackage: 'Microsoft.Dynamics.AX.Platform.DevALM.BuildXpp'
@@ -24,10 +47,6 @@ variables:
   MetadataPath: '$(Build.SourcesDirectory)\Metadata'
   NugetConfigsPath: '$(Build.SourcesDirectory)\Metadata'
   NugetsPath: '$(Pipeline.Workspace)\NuGets'
-  # Variables needed for upload to LCS and deploy via LCS
-  BuildArtifactName: drop
-  LcsServiceConnectionName: 'LCS - Connection'
-  LcsEnvironmentId: ''
 
 stages:
 - stage: D365Build
@@ -109,13 +128,14 @@ stages:
       condition: succeededOrFailed()
 
 # Upload to LCS and deploy via LCS
-- template: xpp-ci-LCS-deployment.yml
-  parameters:
-    buildArtifactName: $(BuildArtifactName)
-    lcsServiceConnectionName: $(LcsServiceConnectionName)
-    lcsEnvironmentId: $(LcsEnvironmentId)
-    lcsProjectId: 0
-    lcsPackages:
-      - name: AXDeployableRuntime
-        artifactAssetPath: 'AXDeployableRuntime_$(Build.BuildNumber).zip'
-        deployPackage: true
+- ${{ if eq(parameters.DeployToLCS, true) }}:
+  - template: xpp-ci-LCS-deployment.yml
+    parameters:
+      buildArtifactName: ${{ parameters.BuildArtifactName }}
+      lcsServiceConnectionName: ${{ parameters.LcsServiceConnectionName }}
+      lcsEnvironmentId: ${{ parameters.LcsEnvironmentId }}
+      lcsProjectId: ${{ parameters.LcsProjectId }}
+      lcsPackages:
+        - name: AXDeployableRuntime
+          artifactAssetPath: 'AXDeployableRuntime_$(Build.BuildNumber).zip'
+          deployPackage: ${{ parameters.DeployToLCS }}
