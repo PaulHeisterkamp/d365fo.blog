@@ -1,11 +1,10 @@
-name: $(Date:yy.MM.dd)$(Rev:.r)
+name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
+
+trigger:
+- none
 
 pool:
-# Use the VS2017 image
-  vmImage: 'vs2017-win2016'
-  demands:
-    - msbuild
-    - visualstudio
+  vmImage: 'windows-latest'
 
 stages:
 - stage: DownloadAndPushD365FoNuGet
