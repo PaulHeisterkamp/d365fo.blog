@@ -9,15 +9,15 @@ pool:
 # Variables/parameters needed for download from LCS and push to Azure DevOps
 parameters:
 - name: LcsFileAssetName
-  displayName: Seach pattern to find the relevant D365 NuGets
+  displayName: Search pattern to find the relevant D365 NuGets
   type: string
   default: 'PU41*'
 - name: LcsServiceConnectionName
-  displayName: Service conncetion name to use for LCS deployment
+  displayName: Service connection name to use for LCS deployment
   type: string
   default: 'LCS - Connection'
 - name: LcsProjectId
-  displayName: LCS project id to deploy build result 
+  displayName: LCS project id to deploy build result
   type: number
   default: 0 
 - name: AzureDevOpsPublishFeed
