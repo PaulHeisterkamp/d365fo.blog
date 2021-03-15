@@ -50,6 +50,15 @@ stages:
         fileAssetName: ${{ parameters.LcsFileAssetName }}
 
     - task: PowerShell@2
+      displayName: 'Push D365 NuGets from output'
+      inputs:
+        targetType: 'inline'
+        script: |
+          $nuGetsList = '$(DownloadNuGet.FilePath)'
+          write-output $nuGet.Name
+        workingDirectory: '$(Build.ArtifactStagingDirectory)'
+
+    - task: PowerShell@2
       displayName: 'Push D365 NuGet'
       inputs:
         targetType: 'inline'
