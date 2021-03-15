@@ -1,0 +1,25 @@
+name: $(Date:yy.MM.dd)$(Rev:.r)
+
+pool:
+# Use the VS2017 image
+  vmImage: 'vs2017-win2016'
+  demands:
+    - msbuild
+    - visualstudio
+
+stages:
+- stage: DownloadAndPushD365FoNuGet
+  displayName: 'Download and push D365 NuGet'
+  jobs:
+  - job: DownloadAndPushD365FoNuGet    
+    displayName: 'Download and push D365 NuGet'
+    steps:
+    # Install NuGet and use -ExcludeVersion option to avoid paths containing version numbers
+    - task: NuGetInstaller@0
+      displayName: 'NuGet install Packages'
+      inputs:
+        solution: '$(NugetConfigsPath)\packages.config'
+        nugetConfigPath: '$(NugetConfigsPath)\nuget.config'
+        restoreMode: install
+        nuGetRestoreArgs: '-ExcludeVersion -OutputDirectory "$(NugetsPath)"'
+        nuGetVersion: 4.0.0.2283
