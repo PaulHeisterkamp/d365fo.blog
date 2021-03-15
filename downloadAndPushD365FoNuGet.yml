@@ -8,6 +8,10 @@ pool:
 
 # Variables/parameters needed for downlod from LCS and push to Azure DevOps
 parameters:
+- name: LcsFileAssetName
+  displayName: Seach pattern to find the relevant D365 NuGets
+  type: string
+  default: 'PU41*'
 - name: LcsServiceConnectionName
   displayName: Service conncetion name to use for LCS deployment
   type: string
@@ -43,5 +47,18 @@ stages:
         searchPattern: '1'
         # NuGet Package
         fileAssetType: '27'
-        fileAssetName: 'PU41*'
+        fileAssetName: ${{ parameters.LcsFileAssetName }}
+
+    - task: PowerShell@2
+      displayName: 'Push D365 NuGet'
+      inputs:
+        targetType: 'inline'
+        script: |
+          $nuGets = Get-ChildItem -Path '*' -File
+          foreach($nuGet in $nuGets)
+          {
+              write-output $nuGet.Name
+              write-output $nuGet.FullName
+          }
+        workingDirectory: '$(Build.ArtifactStagingDirectory)'
     
