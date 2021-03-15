@@ -19,11 +19,11 @@ parameters:
 - name: UploadToLCS
   displayName: Do you want to upload the build result to LCS?
   type: boolean
-  default: true
+  default: false
 - name: DeployToLCSEnvironment
   displayName: Do you want to deploy the build result to the LCS environment?
   type: boolean
-  default: true
+  default: false
 - name: BuildArtifactName
   displayName: Build artifact name to use for LCS deployment.
   type: string

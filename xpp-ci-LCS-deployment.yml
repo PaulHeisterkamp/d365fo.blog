@@ -21,6 +21,7 @@ stages:
     displayName: 'Upload to LCS and deploy via LCS'
     steps:
     - checkout: none
+
     - task: DownloadBuildArtifacts@0
       displayName: 'Download build artifacts - ${{ parameters.buildArtifactName }}'
       inputs:        
@@ -28,6 +29,7 @@ stages:
         downloadType: 'single'
         artifactName: ${{ parameters.buildArtifactName }}
         downloadPath: '$(System.ArtifactsDirectory)'    
+
     - ${{ each deployablePackage in parameters.lcsPackages }}:
       - task: Dyn365FinOps.dynamics365-finops-tools.lcs-assetupload.LCSAssetUpload@0
         name : Upload${{ deployablePackage.name }}
@@ -38,6 +40,7 @@ stages:
           assetPath: '$(System.ArtifactsDirectory)/${{ parameters.buildArtifactName }}/${{ deployablePackage.artifactAssetPath }}'
           assetName: '${{ deployablePackage.name }}$(Build.BuildNumber)'
           assetDescription: 'SourceBranchName: $(Build.SourceBranchName) BuildNumber: $(Build.BuildNumber)'
+          
       - ${{ if eq(deployablePackage.deployPackage, true) }}:
         - task: Dyn365FinOps.dynamics365-finops-tools.lcs-assetdeploy.LCSAssetDeploy@0
           displayName: 'Deploy via LCS - ${{ deployablePackage.name }}'
