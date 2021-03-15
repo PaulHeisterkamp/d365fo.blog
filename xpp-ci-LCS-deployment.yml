@@ -20,6 +20,7 @@ stages:
   - job: UploadAndDeploy    
     displayName: 'Upload to LCS and deploy via LCS'
     steps:
+    - checkout: none
     - task: DownloadBuildArtifacts@0
       displayName: 'Download build artifacts - ${{ parameters.buildArtifactName }}'
       inputs:        
