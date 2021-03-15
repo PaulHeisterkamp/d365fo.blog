@@ -43,6 +43,5 @@ stages:
         searchPattern: '1'
         # NuGet Package
         fileAssetType: '27'
-        fileAssetName: 'PU41/10.0.17 - Compiler Tools'
-
-    - script: echo $(DownloadNuGet)
+        fileAssetName: 'PU41*'
+    
