@@ -16,8 +16,12 @@ pool:
   
 # Variables/parameters needed for upload to LCS and deploy via LCS
 parameters:
-- name: DeployToLCS
-  displayName: Do you want to deploy the build result to LCS?
+- name: UploadToLCS
+  displayName: Do you want to upload the build result to LCS?
+  type: boolean
+  default: true
+- name: DeployToLCSEnvironment
+  displayName: Do you want to deploy the build result to the LCS environment?
   type: boolean
   default: true
 - name: BuildArtifactName
@@ -128,7 +132,7 @@ stages:
       condition: succeededOrFailed()
 
 # Upload to LCS and deploy via LCS
-- ${{ if eq(parameters.DeployToLCS, true) }}:
+- ${{ if or(eq(parameters.UploadToLCS, true), eq(parameters.DeployToLCSEnvironment, true)) }}:
   - template: xpp-ci-LCS-deployment.yml
     parameters:
       buildArtifactName: ${{ parameters.BuildArtifactName }}
@@ -138,4 +142,4 @@ stages:
       lcsPackages:
         - name: AXDeployableRuntime
           artifactAssetPath: 'AXDeployableRuntime_$(Build.BuildNumber).zip'
-          deployPackage: ${{ parameters.DeployToLCS }}
+          deployPackage: ${{ parameters.DeployToLCSEnvironment }}
