@@ -17,6 +17,12 @@ parameters:
   type: number
   default: 0 
 
+# Declare some shorthand for NuGet package names
+# Make editing the path for metadata and NuGet extraction folder easier
+variables:  
+  NugetConfigsPath: '$(Build.SourcesDirectory)\Metadata'
+  NugetsPath: '$(Pipeline.Workspace)\NuGets'
+
 stages:
 - stage: DownloadAndPushD365FoNuGet
   displayName: 'Download and push D365 NuGet'
