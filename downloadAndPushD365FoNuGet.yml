@@ -1,0 +1,58 @@
+name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
+
+trigger:
+- none
+
+pool:
+  vmImage: 'windows-latest'
+
+# Variables/parameters needed for download from LCS and push to Azure DevOps
+parameters:
+- name: LcsFileAssetName
+  displayName: Search pattern to find the relevant D365 NuGets
+  type: string
+  default: 'PU41*'
+- name: LcsServiceConnectionName
+  displayName: Service connection name to use for LCS deployment
+  type: string
+  default: 'LCS - Connection'
+- name: LcsProjectId
+  displayName: LCS project id to deploy build result
+  type: number
+  default: 0 
+- name: AzureDevOpsPublishFeed
+  displayName: Id of Azure DevOps feed to publish NuGets
+  type: string
+  default: '00000000-0000-0000-0000-000000000000'
+
+stages:
+- stage: DownloadAndPushD365FoNuGet
+  displayName: 'Download and push D365 NuGet'
+  jobs:
+  - job: DownloadAndPushD365FoNuGet    
+    displayName: 'Download and push D365 NuGet'
+    steps:
+    - checkout: none
+    
+    - task: LCSAssetDownload@0
+      name : DownloadNuGet
+      displayName: 'Download NuGet from LCS'
+      inputs:
+        serviceConnectionName: ${{ parameters.LcsServiceConnectionName }}
+        projectId: ${{ parameters.LcsProjectId }}
+        assetPath: '$(Build.ArtifactStagingDirectory)'
+        # Name
+        searchPattern: '1'
+        # NuGet Package
+        fileAssetType: '27'
+        fileAssetName: ${{ parameters.LcsFileAssetName }}
+
+    - task: NuGetCommand@2
+      displayName: 'Push nuget package'
+      inputs:
+        command: 'push'
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg;!$(Build.ArtifactStagingDirectory)/*.symbols.nupkg'
+        nuGetFeedType: 'internal'
+        publishVstsFeed: ${{ parameters.AzureDevOpsPublishFeed }}
+        allowPackageConflicts: true
+    
