@@ -20,12 +20,10 @@ parameters:
   displayName: LCS project id to deploy build result 
   type: number
   default: 0 
-
-# Declare some shorthand for NuGet package names
-# Make editing the path for metadata and NuGet extraction folder easier
-variables:  
-  NugetConfigsPath: '$(Build.SourcesDirectory)\Metadata'
-  NugetsPath: '$(Pipeline.Workspace)\NuGets'
+- name: AzureDevOpsPublishFeed
+  displayName: Id of Azure DevOps feed to publish NuGets
+  type: string
+  default: '00000000-0000-0000-0000-000000000000'
 
 stages:
 - stage: DownloadAndPushD365FoNuGet
@@ -49,32 +47,12 @@ stages:
         fileAssetType: '27'
         fileAssetName: ${{ parameters.LcsFileAssetName }}
 
-    - task: PowerShell@2
-      displayName: 'Push D365 NuGets from output: $(DownloadNuGet.FilePath)'
-      inputs:
-        targetType: 'inline'
-        script: |
-          $nuGetsList = $(DownloadNuGet.FilePath)
-          write-output $nuGet.Name
-        workingDirectory: '$(Build.ArtifactStagingDirectory)'
-
-    - task: PowerShell@2
-      displayName: 'Push D365 NuGet'
-      inputs:
-        targetType: 'inline'
-        script: |
-          $nuGets = Get-ChildItem -Path '*' -File
-          foreach($nuGet in $nuGets)
-          {
-              write-output $nuGet.Name
-              write-output $nuGet.FullName
-          }
-        workingDirectory: '$(Build.ArtifactStagingDirectory)'
-
     - task: NuGetCommand@2
       displayName: 'Push nuget package'
       inputs:
-        command: push
-        publishVstsFeed: ${{ parameters.packageTargetFeed }}
+        command: 'push'
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg;!$(Build.ArtifactStagingDirectory)/*.symbols.nupkg'
+        nuGetFeedType: 'internal'
+        publishVstsFeed: ${{ parameters.AzureDevOpsPublishFeed }}
         allowPackageConflicts: true
     
