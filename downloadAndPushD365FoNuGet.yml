@@ -6,7 +6,7 @@ trigger:
 pool:
   vmImage: 'windows-latest'
 
-# Variables/parameters needed for downlod from LCS and push to Azure DevOps
+# Variables/parameters needed for download from LCS and push to Azure DevOps
 parameters:
 - name: LcsFileAssetName
   displayName: Seach pattern to find the relevant D365 NuGets
