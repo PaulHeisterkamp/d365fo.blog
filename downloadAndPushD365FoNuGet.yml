@@ -33,6 +33,7 @@ stages:
     - checkout: none
     
     - task: LCSAssetDownload@0
+      name : DownloadNuGet
       displayName: 'Download NuGet from LCS'
       inputs:
         serviceConnectionName: ${{ parameters.LcsServiceConnectionName }}
@@ -43,3 +44,5 @@ stages:
         # NuGet Package
         fileAssetType: '27'
         fileAssetName: 'PU41/10.0.17 - Compiler Tools'
+
+    - script: echo $(DownloadNuGet)
