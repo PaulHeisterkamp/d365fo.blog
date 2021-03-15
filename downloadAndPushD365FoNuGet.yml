@@ -70,4 +70,11 @@ stages:
               write-output $nuGet.FullName
           }
         workingDirectory: '$(Build.ArtifactStagingDirectory)'
+
+    - task: NuGetCommand@2
+      displayName: 'Push nuget package'
+      inputs:
+        command: push
+        publishVstsFeed: ${{ parameters.packageTargetFeed }}
+        allowPackageConflicts: true
     
