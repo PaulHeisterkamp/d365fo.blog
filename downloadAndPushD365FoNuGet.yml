@@ -6,6 +6,17 @@ trigger:
 pool:
   vmImage: 'windows-latest'
 
+# Variables/parameters needed for downlod from LCS and push to Azure DevOps
+parameters:
+- name: LcsServiceConnectionName
+  displayName: Service conncetion name to use for LCS deployment
+  type: string
+  default: 'LCS - Connection'
+- name: LcsProjectId
+  displayName: LCS project id to deploy build result 
+  type: number
+  default: 0 
+
 stages:
 - stage: DownloadAndPushD365FoNuGet
   displayName: 'Download and push D365 NuGet'
@@ -22,3 +33,15 @@ stages:
         restoreMode: install
         nuGetRestoreArgs: '-ExcludeVersion -OutputDirectory "$(NugetsPath)"'
         nuGetVersion: 4.0.0.2283
+
+    - task: LCSAssetDownload@0
+      displayName: 'Download NuGet from LCS'
+      inputs:
+        serviceConnectionName: ${{ parameters.LcsServiceConnectionName }}
+        projectId: ${{ parameters.LcsProjectId }}
+        assetPath: '$(Build.ArtifactStagingDirectory)'
+        # Name
+        searchPattern: '1'
+        # NuGet Package
+        fileAssetType: '27'
+        fileAssetName: 'PU41/10.0.17 - Compiler Tools'
