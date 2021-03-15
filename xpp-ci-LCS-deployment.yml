@@ -1,0 +1,52 @@
+# Template for Upload to LCS and Deploy via LCS
+parameters:
+- name: buildArtifactName
+  type: string
+  default: 'Packages'  
+- name: lcsServiceConnectionName
+  type: string  
+- name: lcsEnvironmentId
+  type: string
+  default: ''
+- name: lcsProjectId
+  type: number  
+- name: lcsPackages
+  type: object  
+
+stages:
+- stage: UploadAndDeploy
+  displayName: 'Upload to LCS and Deploy via LCS'
+  jobs:
+  - job: UploadAndDeploy    
+    displayName: 'Upload to LCS and deploy via LCS'
+    steps:
+    - checkout: none
+
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download build artifacts - ${{ parameters.buildArtifactName }}'
+      inputs:        
+        buildType: 'current'
+        downloadType: 'single'
+        artifactName: ${{ parameters.buildArtifactName }}
+        downloadPath: '$(System.ArtifactsDirectory)'    
+
+    - ${{ each deployablePackage in parameters.lcsPackages }}:
+      - task: Dyn365FinOps.dynamics365-finops-tools.lcs-assetupload.LCSAssetUpload@0
+        name : Upload${{ deployablePackage.name }}
+        displayName: 'Upload to LCS - ${{ deployablePackage.name }}'
+        inputs:
+          serviceConnectionName: ${{ parameters.lcsServiceConnectionName }}
+          projectId: ${{ parameters.lcsProjectId }}
+          assetPath: '$(System.ArtifactsDirectory)/${{ parameters.buildArtifactName }}/${{ deployablePackage.artifactAssetPath }}'
+          assetName: '${{ deployablePackage.name }}$(Build.BuildNumber)'
+          assetDescription: 'SourceBranchName: $(Build.SourceBranchName) BuildNumber: $(Build.BuildNumber)'
+          
+      - ${{ if eq(deployablePackage.deployPackage, true) }}:
+        - task: Dyn365FinOps.dynamics365-finops-tools.lcs-assetdeploy.LCSAssetDeploy@0
+          displayName: 'Deploy via LCS - ${{ deployablePackage.name }}'
+          inputs:
+            serviceConnectionName: ${{ parameters.lcsServiceConnectionName }}
+            projectId: ${{ parameters.lcsProjectId }}              
+            environmentId: ${{ parameters.lcsEnvironmentId }}
+            fileAssetId: '$(Upload${{ deployablePackage.name }}.FileAssetId)'
+            waitForCompletion: false
