@@ -11,7 +11,7 @@ parameters:
 - name: LcsFileAssetName
   displayName: Search pattern to find the relevant D365 NuGets
   type: string
-  default: 'PU41*'
+  default: 'PU42*'
 - name: LcsServiceConnectionName
   displayName: Service connection name to use for LCS deployment
   type: string
