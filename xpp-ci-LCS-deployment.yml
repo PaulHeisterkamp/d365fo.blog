@@ -42,7 +42,7 @@ stages:
           assetDescription: 'SourceBranchName: $(Build.SourceBranchName) BuildNumber: $(Build.BuildNumber)'
           
       - ${{ if eq(deployablePackage.deployPackage, true) }}:
-        - task: Dyn365FinOps.dynamics365-finops-tools.lcs-assetdeploy.LCSAssetDeploy@0
+        - task: Dyn365FinOps.dynamics365-finops-tools.lcs-assetdeploy.LCSAssetDeploy@1
           displayName: 'Deploy via LCS - ${{ deployablePackage.name }}'
           inputs:
             serviceConnectionName: ${{ parameters.lcsServiceConnectionName }}
