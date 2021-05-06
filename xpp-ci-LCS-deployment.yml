@@ -49,4 +49,5 @@ stages:
             projectId: ${{ parameters.lcsProjectId }}              
             environmentId: ${{ parameters.lcsEnvironmentId }}
             fileAssetId: '$(Upload${{ deployablePackage.name }}.FileAssetId)'
+            releaseName: '${{ deployablePackage.name }}$(Build.BuildNumber)'
             waitForCompletion: false
