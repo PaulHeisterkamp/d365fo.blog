@@ -15,9 +15,9 @@ stages:
     displayName: 'Push NuGet packages to Azure Artifacts'
     steps:
     - powershell: |
-      New-Item -Path . -Name "nugetpublish" -ItemType "directory"
-      cd nugetpublish
-      New-Item -Path . -Name "content" -ItemType "directory"   
+       New-Item -Path . -Name "nugetpublish" -ItemType "directory"
+       cd nugetpublish
+       New-Item -Path . -Name "content" -ItemType "directory"   
       workingDirectory: '$(Build.ArtifactStagingDirectory)'
       displayName: 'Create staging and package directories'
 
