@@ -26,7 +26,7 @@ stages:
       inputs:
         buildType: 'current'
         downloadType: 'single'
-        artifactName: 'drop'
+        artifactName: 'd365-bin'
 
     - task: CopyFiles@2
       displayName: 'Copy nuspec file'
@@ -35,7 +35,7 @@ stages:
         TargetFolder: '$(Build.ArtifactStagingDirectory)/nugetpublish'
 
     - ${{ each package in parameters.packagesToPublish }}:
-      - powershell: 'Copy-Item -Path $(Build.ArtifactStagingDirectory)/drop/${{ package }} -Destination $(Build.ArtifactStagingDirectory)/nugetpublish/content -Recurse'
+      - powershell: 'Copy-Item -Path $(Build.ArtifactStagingDirectory)/d365-bin/${{ package }} -Destination $(Build.ArtifactStagingDirectory)/nugetpublish/content -Recurse'
         displayName: 'Copy ${{ package }} to nuget directory'
 
     - task: NuGetCommand@2

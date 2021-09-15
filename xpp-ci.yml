@@ -134,6 +134,14 @@ stages:
       inputs:
         PathtoPublish: '$(build.artifactstagingdirectory)'
       condition: succeededOrFailed()
+        
+    # enables push NuGet packages to Azure Artifacts
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish D365 binaries'
+      inputs:
+        PathtoPublish: '$(Build.BinariesDirectory)'
+        ArtifactName: 'd365-bin'
+        publishLocation: 'Container'
 
 # Upload to LCS and deploy via LCS
 - ${{ if or(eq(parameters.UploadToLCS, true), eq(parameters.DeployToLCSEnvironment, true)) }}:
