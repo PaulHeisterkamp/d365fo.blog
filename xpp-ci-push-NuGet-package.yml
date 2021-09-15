@@ -7,41 +7,47 @@ parameters:
 - name: packagesToPublish
   type: object
 
-steps:
-- powershell: |
-   New-Item -Path . -Name "nugetpublish" -ItemType "directory"
-   cd nugetpublish
-   New-Item -Path . -Name "content" -ItemType "directory"   
-  workingDirectory: '$(Build.ArtifactStagingDirectory)'
-  displayName: 'Create staging and package directories'
+stages:
+- stage: PushNuGetPackage
+  displayName: 'Push NuGet packages to Azure Artifacts'
+  jobs:
+  - job: PushNuGetPackage    
+    displayName: 'Push NuGet packages to Azure Artifacts'
+    steps:
+    - powershell: |
+      New-Item -Path . -Name "nugetpublish" -ItemType "directory"
+      cd nugetpublish
+      New-Item -Path . -Name "content" -ItemType "directory"   
+      workingDirectory: '$(Build.ArtifactStagingDirectory)'
+      displayName: 'Create staging and package directories'
 
-- task: DownloadBuildArtifacts@0
-  displayName: 'Download D365 binaries'
-  inputs:
-    buildType: 'current'
-    downloadType: 'single'
-    artifactName: 'drop'
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download D365 binaries'
+      inputs:
+        buildType: 'current'
+        downloadType: 'single'
+        artifactName: 'drop'
 
-- task: CopyFiles@2
-  displayName: 'Copy nuspec file'
-  inputs:
-    Contents: ${{ parameters.nuspecFileName }}
-    TargetFolder: '$(Build.ArtifactStagingDirectory)/nugetpublish'
+    - task: CopyFiles@2
+      displayName: 'Copy nuspec file'
+      inputs:
+        Contents: ${{ parameters.nuspecFileName }}
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/nugetpublish'
 
-- ${{ each package in parameters.packagesToPublish }}:
-  - powershell: 'Copy-Item -Path $(Build.ArtifactStagingDirectory)/drop/${{ package }} -Destination $(Build.ArtifactStagingDirectory)/nugetpublish/content -Recurse'
-    displayName: 'Copy ${{ package }} to nuget directory'
+    - ${{ each package in parameters.packagesToPublish }}:
+      - powershell: 'Copy-Item -Path $(Build.ArtifactStagingDirectory)/drop/${{ package }} -Destination $(Build.ArtifactStagingDirectory)/nugetpublish/content -Recurse'
+        displayName: 'Copy ${{ package }} to nuget directory'
 
-- task: NuGetCommand@2
-  displayName: 'Create nuget package'
-  inputs:
-    command: pack
-    packagesToPack: '$(Build.ArtifactStagingDirectory)/nugetpublish/${{ parameters.nuspecFileName }}'
-    versioningScheme: byBuildNumber
-    
-- task: NuGetCommand@2
-  displayName: 'Push nuget package'
-  inputs:
-    command: push
-    publishVstsFeed: ${{ parameters.packageTargetFeed }}
-    allowPackageConflicts: true
+    - task: NuGetCommand@2
+      displayName: 'Create nuget package'
+      inputs:
+        command: pack
+        packagesToPack: '$(Build.ArtifactStagingDirectory)/nugetpublish/${{ parameters.nuspecFileName }}'
+        versioningScheme: byBuildNumber
+        
+    - task: NuGetCommand@2
+      displayName: 'Push nuget package'
+      inputs:
+        command: push
+        publishVstsFeed: ${{ parameters.packageTargetFeed }}
+        allowPackageConflicts: true
