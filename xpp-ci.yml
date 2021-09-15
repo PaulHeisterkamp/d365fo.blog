@@ -14,8 +14,12 @@ pool:
     - msbuild
     - visualstudio
   
-# Variables/parameters needed for upload to LCS and deploy via LCS
+# Variables/parameters needed for various sub processes
 parameters:
+- name: PushNuGetPackage
+  displayName: Do you want to push the result as a NuGet package to Azure Artifact?
+  type: boolean
+  default: false
 - name: UploadToLCS
   displayName: Do you want to upload the build result to LCS?
   type: boolean
@@ -143,3 +147,12 @@ stages:
         - name: AXDeployableRuntime
           artifactAssetPath: 'AXDeployableRuntime_$(Build.BuildNumber).zip'
           deployPackage: ${{ parameters.DeployToLCSEnvironment }}
+
+# Push NuGet packages to Azure Artifacts
+- ${{ if eq(parameters.PushNuGetPackage, true) }}:
+  - template: xpp-ci-push-NuGet-package.yml
+    parameters:
+      packageTargetFeed: 'a733529c-d058-41c6-a2da-28e9d7710a60'
+      nuspecFileName: 'D365FoBlog.nuspec'
+      packagesToPublish:
+        - D365FoBlog
