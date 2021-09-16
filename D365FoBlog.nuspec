@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>D365FoBlog</id>
+    <version>1.0.0</version>
+    <authors>Paul Heisterkamp</authors>
+    <owners>Paul Heisterkamp</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Package containing samples and tools from d365fo.blog</description>
+    <copyright>Copyright 2021</copyright>
+    <tags>MsDyn365FO DynOps DynALM XppGroupies MVPBuzz</tags>
+    <dependencies />
+  </metadata>
+</package>

@@ -3,7 +3,7 @@
 # https://docs.microsoft.com/en-us/dynamics365/fin-ops-core/dev-itpro/dev-tools/hosted-build-automation
 
 # Change the name of the build to a 4-digit version number to be used for model versioning
-name: $(Date:yy.MM.dd)$(Rev:.r)
+name: 1.0.$(Year:yy)$(DayOfYear)$(Rev:.r)
 trigger:
 - master
 
@@ -14,8 +14,12 @@ pool:
     - msbuild
     - visualstudio
   
-# Variables/parameters needed for upload to LCS and deploy via LCS
+# Variables/parameters needed for various sub processes
 parameters:
+- name: PushNuGetPackage
+  displayName: Do you want to push the result as a NuGet package to Azure Artifact?
+  type: boolean
+  default: false
 - name: UploadToLCS
   displayName: Do you want to upload the build result to LCS?
   type: boolean
@@ -130,6 +134,15 @@ stages:
       inputs:
         PathtoPublish: '$(build.artifactstagingdirectory)'
       condition: succeededOrFailed()
+        
+    # enables push NuGet packages to Azure Artifacts
+    - ${{ if eq(parameters.PushNuGetPackage, true) }}:
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish D365 binaries'
+        inputs:
+          PathtoPublish: '$(Build.BinariesDirectory)'
+          ArtifactName: 'd365-bin'
+          publishLocation: 'Container'
 
 # Upload to LCS and deploy via LCS
 - ${{ if or(eq(parameters.UploadToLCS, true), eq(parameters.DeployToLCSEnvironment, true)) }}:
@@ -143,3 +156,12 @@ stages:
         - name: AXDeployableRuntime
           artifactAssetPath: 'AXDeployableRuntime_$(Build.BuildNumber).zip'
           deployPackage: ${{ parameters.DeployToLCSEnvironment }}
+
+# Push NuGet packages to Azure Artifacts
+- ${{ if eq(parameters.PushNuGetPackage, true) }}:
+  - template: xpp-ci-push-NuGet-package.yml
+    parameters:
+      packageTargetFeed: 'a733529c-d058-41c6-a2da-28e9d7710a60'
+      nuspecFileName: 'D365FoBlog.nuspec'
+      packagesToPublish:
+        - D365FoBlog
